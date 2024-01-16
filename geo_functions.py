@@ -61,9 +61,12 @@ def find_poi_in_street(street):
 
 
 def nodes_to_df(nodes):
-    df = pd.DataFrame([{**node.raw, **(node.raw['address'])} for node in nodes])
-    accepted_type = 'place'
-    return df.query("""osm_type == 'node'""")
+    try:
+        df = pd.DataFrame([{**node.raw, **(node.raw['address'])} for node in nodes])
+        accepted_type = 'place'
+        return df.query("""osm_type == 'node'""")
+    except:
+        return None
 
 
 def find_near_pois(node, poi_type, distance):
@@ -105,3 +108,17 @@ def find_near_pois(node, poi_type, distance):
 
 def enrich_pois(nodes):
     return [reverse(node) for node in nodes]
+
+def show_map(pois):
+    names = [get_poi_name(pois, idx) for idx in range(len(pois))]
+    lats = [float(l) for l in pois['lat'].tolist()]
+    lons = [float(l) for l in pois['lon'].tolist()]
+    df = pd.DataFrame(
+        {'Point': names,
+         'Latitude': lats,
+         'Longitude': lons})
+    map_1 = KeplerGl(height=400)
+    map_1.add_data(
+        data=df, name="POIs"
+    )
+    # keplergl_static(map_1, center_map=True)

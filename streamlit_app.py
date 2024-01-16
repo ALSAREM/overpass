@@ -29,19 +29,12 @@ def show_POIs(pois):
         for idx in range(len(pois)):
             show_POI(pois, idx)
     with col2:
-        st.subheader("Map")
-        names = [get_poi_name(pois, idx) for idx in range(len(pois))]
-        lats = [float(l) for l in pois['lat'].tolist()]
-        lons = [float(l) for l in pois['lon'].tolist()]
-        df = pd.DataFrame(
-            {'Point': names,
-             'Latitude': lats,
-             'Longitude': lons})
-        map_1 = KeplerGl(height=400)
-        map_1.add_data(
-            data=df, name="POIs"
-        )
-        # keplergl_static(map_1, center_map=True)
+        # st.subheader("Map")
+        # show_map(pois)
+        # st.subheader("Data")
+        with st.expander("List of POIs"):
+            st.dataframe(pois)
+
 
 
 def show_POI(pois, idx):
@@ -65,7 +58,7 @@ def show_POI(pois, idx):
 st.title("Gaided First POC (POIs)")
 st.subheader("Find all POIs near to an address")
 main_container = st.container(border=True)
-addr = main_container.text_input("Your Address", "37 Quai Jacques Chirac, 75007 Paris")
+addr = main_container.text_input("Your Address", "61 chemin de crépieux")
 poi_type = main_container.selectbox(
     'You are interested in what?',
     ('tourism', 'amenity', 'building', 'all'))
@@ -76,6 +69,7 @@ if "clicked" not in st.session_state:
     st.session_state.clicked = False
 
 if st.session_state.clicked:
+    st.session_state.clicked = False
     bar = st.progress(0)
     # Find the right address
     loc = geo_one_loc(addr)
@@ -90,10 +84,12 @@ if st.session_state.clicked:
         bar.progress(80)
         POIs = nodes_to_df(pois)
         bar.progress(90)
-        show_POIs(POIs)
-        bar.progress(100)
-        st.balloons()
-        with st.expander("Data"):
-            st.dataframe(POIs)
+        if POIs is not None:
+            show_POIs(POIs)
+            bar.progress(100)
+            st.balloons()
+        else:
+            bar.progress(100)
+            st.warning('no results')
     else:
         st.warning('no results')
