@@ -1,25 +1,11 @@
-import pandas as pd
 import streamlit as st
-from geo_functions import geo_one_loc, nodes_to_df, find_near_pois, enrich_pois
+from geo_functions import geo_one_loc, nodes_to_df, find_near_pois, enrich_pois, get_poi_name, play_text
 # from streamlit_keplergl import keplergl_static
-from keplergl import KeplerGl
 
 st.set_page_config(layout="wide")
 
-
 def click_button():
     st.session_state.clicked = True
-
-
-def get_poi_name(pois, idx):
-    try:
-        if len(pois.loc[idx, 'name']) != 0:
-            return pois.loc[idx, 'name']
-        else:
-            return pois.loc[idx, 'display_name']
-    except:
-        print('error in get_poi_name')
-        return 'no_name'
 
 
 def show_POIs(pois):
@@ -36,7 +22,6 @@ def show_POIs(pois):
             st.dataframe(pois)
 
 
-
 def show_POI(pois, idx):
     try:
         name = get_poi_name(pois, idx)
@@ -51,6 +36,8 @@ def show_POI(pois, idx):
             container.text('Municipality: ' + pois.loc[idx, 'municipality'])
             container.text('Region: ' + pois.loc[idx, 'state_district'] + ' | ' + pois.loc[idx, 'state'])
             container.text('Country: ' + pois.loc[idx, 'country'])
+            sound_file = play_text("Bienvenu à "+ name)
+            st.audio(sound_file)
     except:
         print('error')
 
@@ -76,6 +63,8 @@ if st.session_state.clicked:
     if loc is not None:
         st.text('Full name: ' + loc.raw['display_name'])
         st.text('Street name: ' + loc.raw['address']['road'])
+        sound_file = play_text("Bienvenu à " + loc.raw['display_name'])
+        st.audio(sound_file)
         # find POIs on the same street
         bar.progress(10)
         nodes = find_near_pois(loc, poi_type, distance)

@@ -1,6 +1,8 @@
 from geopy.geocoders import Nominatim
 import overpy
 import pandas as pd
+from gtts import gTTS
+from io import BytesIO
 
 geolocator = Nominatim(user_agent="my_user_agent")
 
@@ -109,6 +111,18 @@ def find_near_pois(node, poi_type, distance):
 def enrich_pois(nodes):
     return [reverse(node) for node in nodes]
 
+
+def get_poi_name(pois, idx):
+    try:
+        if len(pois.loc[idx, 'name']) != 0:
+            return pois.loc[idx, 'name']
+        else:
+            return pois.loc[idx, 'display_name']
+    except:
+        print('error in get_poi_name')
+        return 'no_name'
+
+
 def show_map(pois):
     names = [get_poi_name(pois, idx) for idx in range(len(pois))]
     lats = [float(l) for l in pois['lat'].tolist()]
@@ -122,3 +136,9 @@ def show_map(pois):
         data=df, name="POIs"
     )
     # keplergl_static(map_1, center_map=True)
+
+def play_text(text):
+    sound_file = BytesIO()
+    tts = gTTS(text, lang='fr')
+    tts.write_to_fp(sound_file)
+    return sound_file
