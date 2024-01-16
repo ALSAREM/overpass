@@ -1,7 +1,7 @@
 import pandas as pd
 import streamlit as st
-from geo_functions import geo_one_loc, find_poi_in_street, nodes_to_df, find_near_pois, enrich_pois
-from streamlit_keplergl import keplergl_static
+from geo_functions import geo_one_loc, nodes_to_df, find_near_pois, enrich_pois
+# from streamlit_keplergl import keplergl_static
 from keplergl import KeplerGl
 
 st.set_page_config(layout="wide")
@@ -41,7 +41,7 @@ def show_POIs(pois):
         map_1.add_data(
             data=df, name="POIs"
         )
-        keplergl_static(map_1, center_map=True)
+        # keplergl_static(map_1, center_map=True)
 
 
 def show_POI(pois, idx):
