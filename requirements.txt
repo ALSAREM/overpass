@@ -1,0 +1,5 @@
+overpy~=0.7
+pandas~=2.1.4
+geopy~=2.4.1
+streamlit~=1.30.0
+keplergl~=0.3.2
